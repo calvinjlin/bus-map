@@ -1,0 +1,34 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Bus Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+    <link href="style.css" rel="stylesheet">
+
+  </head>
+  <body>
+    <div id="map"></div>
+    <p>This is an example paragraph. Anything in the <strong>body</strong> tag will appear on the page, just like this <strong>p</strong> tag and its contents.</p>
+  </body>
+  <script>
+
+    // initialize the map
+    var map = L.map('map').setView([42.35, -71.08], 13);
+  
+    // load a tile layer
+
+    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18, attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+    // L.tileLayer('https://tile.openstreetmap.org/${z}/${x}/${y}.png',
+    //   {
+    //     attribution: 'Tiles by <a href="http://mapc.org">MAPC</a>, Data by <a href="http://mass.gov/mgis">MassGIS</a>',
+    //     maxZoom: 17,
+    //     minZoom: 9
+    //   }).addTo(map);
+  
+    </script>
+</html>
