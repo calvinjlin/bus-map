@@ -9,8 +9,8 @@
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
     integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
     crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.min.js"></script>
     <link href="style.css" rel="stylesheet">
-
   </head>
   <body>
     <div id="map" class="leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" style="width: 70%; height: 100%; position: relative;" width="70%"></div>
@@ -23,7 +23,21 @@
     // load a tile layer
     L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18, attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
     
+  // Icon options
+    var iconOptions = {
+      iconUrl: 'bus.svg',
+      iconSize: [15, 30]
+    }
+    // Creating a custom icon
+    var customIcon = L.icon(iconOptions);
     
+    // Creating Marker Options
+    var markerOptions = {
+      // title: "MyLocation",
+      // clickable: true,
+      // draggable: true,
+      icon: customIcon
+    }
 
     // Step 1: get the blob id
     var url = "https://data.texas.gov/api/views/cuc7-ywmd/"
@@ -60,7 +74,10 @@
               var lon = position.longitude
               var speed = position.speed
               var direction = position.bearing
-              var marker = L.marker([lat, lon]);
+              var marker = L.marker([lat, lon],markerOptions,{rotationAngle: direction});
+              // var marker = L.marker([lat, lon]);
+              marker.setRotationAngle(direction)
+              marker.setRotationOrigin('center center')
               var message = `
                 <b>Bus #${bus_number} </b> <br>
                 Speed ${speed} <br>
