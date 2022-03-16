@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Grabber</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
+    <body>
+        <p>Hello World!</p>
+    </body>
+    <script>
+        // Step 1: get the blob id
+        var url = "https://data.texas.gov/api/views/cuc7-ywmd/"
+        var data2 = ""
+        $.ajax({
+            method: 'GET',
+            url: url,
+            success: function(data){
+                //data is a JSON object
+                console.info(data)
+                var blobsid = data.blobId
+                newurl = url + "files/" + blobsid + "?filename=vehiclepositions.json"
+                console.log("New url: " + newurl)
+                // Step 2: get the data
+                $.ajax({
+                    method: 'GET',
+                    url: newurl,
+                    success: function(data){
+                        console.info(data);
+                        dowork(JSON.parse(data));
+                }
+        })
+            }
+        })   
+        function dowork(viewdata) 
+        {   
+            console.log('Do work')
+            bus_array = viewdata.entity
+            console.log(bus_array)
+        }     
+    </script>
+</html>

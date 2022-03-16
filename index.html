@@ -1,0 +1,96 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Bus Map</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.min.js"></script>
+    <link href="style.css" rel="stylesheet">
+  </head>
+  <body>
+    <div id="map" class="leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" style="width: 100%; height: 100%; position: relative;" width="70%"></div>
+  </body>
+  <script>
+
+    // initialize the map
+    var map = L.map('map').setView([30.28, -97.74], 11);
+  
+    // load a tile layer
+    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18, attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+    
+  // Icon options
+    var iconOptions = {
+      iconUrl: 'bus.svg',
+      iconSize: [15, 30]
+    }
+    // Creating a custom icon
+    var customIcon = L.icon(iconOptions);
+    
+    // Creating Marker Options
+    var markerOptions = {
+      // title: "MyLocation",
+      // clickable: true,
+      // draggable: true,
+      icon: customIcon
+    }
+
+    // Step 1: get the blob id
+    var url = "https://data.texas.gov/api/views/cuc7-ywmd/"
+        var data2 = ""
+        $.ajax({
+            method: 'GET',
+            url: url,
+            success: function(data){
+                //data is a JSON object
+                console.info(data)
+                var blobsid = data.blobId
+                newurl = url + "files/" + blobsid + "?filename=vehiclepositions.json"
+                console.log("New url: " + newurl)
+                // Step 2: get the data
+                $.ajax({
+                    method: 'GET',
+                    url: newurl,
+                    success: function(data){
+                        console.info(data);
+                        dowork(JSON.parse(data));
+                }
+        })
+            }
+        })   
+        function dowork(viewdata) 
+        {   
+            console.log('Do work')
+            bus_array = viewdata.entity
+            console.log(bus_array)
+            bus_array.forEach(element => {
+              var bus_number = element.id
+              var position = element.vehicle.position
+              var lat = position.latitude
+              var lon = position.longitude
+              var speed = position.speed
+              var direction = position.bearing
+              var marker = L.marker([lat, lon],markerOptions,{rotationAngle: direction});
+              // var marker = L.marker([lat, lon]);
+              marker.setRotationAngle(direction)
+              marker.setRotationOrigin('center center')
+              var message = `
+                <b>Bus #${bus_number} </b> <br>
+                Speed ${speed} <br>
+                Direction ${direction} <br>
+              `;
+              marker.bindPopup(message).openPopup();
+              marker.addTo(map);
+            });
+        }     
+        function addmarker()
+        {
+
+        }
+  
+  </script>
+</html>
