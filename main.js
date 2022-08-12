@@ -24,30 +24,35 @@ let markerOptions = {
   icon: customIcon,
 };
 
-// Step 1: get the blob id
-const url = "https://data.texas.gov/api/views/cuc7-ywmd/";
-let data2 = "";
-$.ajax({
-  method: "GET",
-  url: url,
-  success: function (data) {
-    //data is a JSON object
-    console.info(data);
-    let blobsid = data.blobId;
-    let newurl = url + "files/" + blobsid + "?filename=vehiclepositions.json";
-    console.log("New url: " + newurl);
-    // Step 2: get the data
-    $.ajax({
-      method: "GET",
-      url: newurl,
-      success: function (data) {
-        console.info(data);
-        dowork(JSON.parse(data));
+const BUS_POSITION_URL = "https://data.texas.gov/api/views/cuc7-ywmd/";
+fetch(BUS_POSITION_URL)
+  .then((response) => {
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    return response.json();
+  })
+  .then((data) => {
+    let newUrl =
+      BUS_POSITION_URL +
+      "files/" +
+      data.blobId +
+      "?filename=vehiclepositions.json";
+    fetch(newUrl)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        dowork(data);
         addmarker();
-      },
-    });
-  },
-});
+      });
+  })
+  .catch((e) => {
+    console.warn(e.message);
+  });
 
 function dowork(viewdata) {
   console.log("Do work");
@@ -77,13 +82,17 @@ function dowork(viewdata) {
 }
 
 async function addmarker() {
-  const url = "https://calvinjlin.github.io/bus-map/Routes.geojson";
-  $.ajax({
-    method: "GET",
-    url: url,
-    success: function (data) {
-      console.info(data);
+  fetch("Routes.geojson")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
       L.geoJSON(data).addTo(map);
-    },
-  });
+    })
+    .catch((e) => {
+      console.warn(e.message);
+    });
 }
