@@ -1,24 +1,63 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bus Map</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bus Map</title>
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
     integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
-    crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    crossorigin="" />
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
     integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
     crossorigin=""></script>
-    <script src="https://unpkg.com/leaflet-ajax@2.1.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.min.js"></script>
-    <link href="style.css" rel="stylesheet">
+  <!-- <script src="https://unpkg.com/leaflet-ajax@2.1.0"></script> -->
+  <script src="https://cdn.jsdelivr.net/npm/leaflet-rotatedmarker@0.2.0/leaflet.rotatedMarker.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/Turbo87/sidebar-v2@v0.4.0/css/leaflet-sidebar.css">
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+  <!-- <link href="style.css" rel="stylesheet"> -->
+  <style>
+    body {
+      padding: 0;
+      margin: 0;
+    }
 
-  </head>
-  <body>
-    <div id="map" class="leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom" style="width: 100%; height: 100%; position: relative;" width="70%"></div>
-  </body>
+    html, body, #map{
+      height: 100%;
+      font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif;
+    }
+
+    .lorem {
+      font-style: italic;
+      color: #AAA;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="sidebar" class="sidebar sidebar-left leaflet-touch collapsed">
+    <div class="sidebar-tabs">
+      <ul role="tablist">
+        <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+      </ul>
+    </div>
+    <div class="sidebar-content">
+      <div class="sidebar-pane" id="home">
+        <h1 class="sidebar-header">
+          bus-map
+          <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
+        </h1>
+        <p class="lorem">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum, praesentium. Eum voluptate esse molestiae, natus reprehenderit consectetur doloribus dignissimos quasi. Odit in similique dignissimos repellat tempore blanditiis officia molestias ex?</p>
+      </div>
+    </div>
+  </div>
+  <div id="map"
+    class="sidebar-map leaflet-container leaflet-touch leaflet-retina leaflet-fade-anim leaflet-grab leaflet-touch-drag leaflet-touch-zoom"
+    style="width: 100%; height: 100%; position: relative;" width="70%"></div>
+  <script type="text/javascript"
+    src="https://cdn.jsdelivr.net/gh/Turbo87/sidebar-v2@v0.4.0/js/leaflet-sidebar.js"></script>
   <script src="main.js"></script>
+</body>
 
 </html>

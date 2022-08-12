@@ -24,6 +24,9 @@ let markerOptions = {
   icon: customIcon,
 };
 
+drawRoutes();
+var sidebar = L.control.sidebar('sidebar').addTo(map);
+
 const BUS_POSITION_URL = "https://data.texas.gov/api/views/cuc7-ywmd/";
 fetch(BUS_POSITION_URL)
   .then((response) => {
@@ -46,18 +49,17 @@ fetch(BUS_POSITION_URL)
         return response.json();
       })
       .then((data) => {
-        dowork(data);
-        addmarker();
+        drawBuses(data);
       });
   })
   .catch((e) => {
     console.warn(e.message);
   });
 
-function dowork(viewdata) {
-  console.log("Do work");
+
+
+async function drawBuses(viewdata) {
   let bus_array = viewdata.entity;
-  console.log(bus_array);
   bus_array.forEach((element) => {
     let bus_number = element.id;
     let position = element.vehicle.position;
@@ -81,7 +83,7 @@ function dowork(viewdata) {
   });
 }
 
-async function addmarker() {
+async function drawRoutes() {
   fetch("Routes.geojson")
     .then((response) => {
       if (!response.ok) {
