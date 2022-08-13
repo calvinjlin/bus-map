@@ -23,43 +23,48 @@ let markerOptions = {
   // draggable: true,
   icon: customIcon,
 };
+map.zoomControl.setPosition("bottomright");
+let busMarkerLayer = L.layerGroup().addTo(map);
+let sidebar = L.control.sidebar("sidebar").addTo(map);
 
 drawRoutes();
-var sidebar = L.control.sidebar('sidebar').addTo(map);
+getBusData();
 
-const BUS_POSITION_URL = "https://data.texas.gov/api/views/cuc7-ywmd/";
-fetch(BUS_POSITION_URL)
-  .then((response) => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then((data) => {
-    let newUrl =
-      BUS_POSITION_URL +
-      "files/" +
-      data.blobId +
-      "?filename=vehiclepositions.json";
-    fetch(newUrl)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        return response.json();
-      })
-      .then((data) => {
-        drawBuses(data);
-      });
-  })
-  .catch((e) => {
-    console.warn(e.message);
-  });
-
-
+document.getElementById("bus-refresh-button").innerHTML += "<p>Success</p>";
+async function getBusData() {
+  const BUS_POSITION_URL = "https://data.texas.gov/api/views/cuc7-ywmd/";
+  fetch(BUS_POSITION_URL)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      let newUrl =
+        BUS_POSITION_URL +
+        "files/" +
+        data.blobId +
+        "?filename=vehiclepositions.json";
+      fetch(newUrl)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          drawBuses(data);
+        });
+    })
+    .catch((e) => {
+      console.warn(e.message);
+    });
+}
 
 async function drawBuses(viewdata) {
   let bus_array = viewdata.entity;
+  busMarkerLayer.clearLayers();
   bus_array.forEach((element) => {
     let bus_number = element.id;
     let position = element.vehicle.position;
@@ -79,8 +84,12 @@ async function drawBuses(viewdata) {
         Direction ${direction} <br>
       `;
     marker.bindPopup(message).openPopup();
-    marker.addTo(map);
+    marker.addTo(busMarkerLayer);
   });
+}
+
+async function refreshBuses() {
+  getBusData();
 }
 
 async function drawRoutes() {

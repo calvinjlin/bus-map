@@ -23,7 +23,9 @@
       margin: 0;
     }
 
-    html, body, #map{
+    html,
+    body,
+    #map {
       height: 100%;
       font: 10pt "Helvetica Neue", Arial, Helvetica, sans-serif;
     }
@@ -32,6 +34,14 @@
       font-style: italic;
       color: #AAA;
     }
+
+    /* button {
+      padding: 7px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background-color: #435561;
+    } */
   </style>
 </head>
 
@@ -40,6 +50,9 @@
     <div class="sidebar-tabs">
       <ul role="tablist">
         <li><a href="#home" role="tab"><i class="fa fa-bars"></i></a></li>
+        <li><a href="javascript:void(0);" role="tab" onclick="refreshBuses()"><i
+              class="fa fa-refresh"></i></a></li>
+
       </ul>
     </div>
     <div class="sidebar-content">
@@ -48,7 +61,11 @@
           bus-map
           <span class="sidebar-close"><i class="fa fa-caret-left"></i></span>
         </h1>
-        <p class="lorem">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum, praesentium. Eum voluptate esse molestiae, natus reprehenderit consectetur doloribus dignissimos quasi. Odit in similique dignissimos repellat tempore blanditiis officia molestias ex?</p>
+        <div id="bus-refresh-button"></div>
+        <!-- <button onclick="refreshBuses()">Refresh</button> -->
+        <p class="lorem">Lorem ipsum dolor sit amet consectetur adipisicing elit. Eum, praesentium. Eum voluptate esse
+          molestiae, natus reprehenderit consectetur doloribus dignissimos quasi. Odit in similique dignissimos repellat
+          tempore blanditiis officia molestias ex?</p>
       </div>
     </div>
   </div>
