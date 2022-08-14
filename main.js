@@ -41,6 +41,7 @@ function handleVisibilityChange() {
     clearInterval(interval);
   } else {
     console.log("Tab visible");
+    getBusData();
     clearInterval(interval);
     interval = setInterval(getBusData, 15000);
     console.log(interval);
