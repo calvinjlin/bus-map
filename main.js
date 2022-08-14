@@ -31,7 +31,24 @@ drawRoutes();
 getBusData();
 
 document.getElementById("bus-refresh-button").innerHTML += "<p>Success</p>";
+
+let interval = setInterval(getBusData, 15000);
+// console.log("Initi"+interval)
+function handleVisibilityChange() {
+  if (document.visibilityState === "hidden") {
+    console.log("Tab hidden");
+    console.log(interval);
+    clearInterval(interval);
+  } else {
+    console.log("Tab visible");
+    clearInterval(interval);
+    interval = setInterval(getBusData, 15000);
+    console.log(interval);
+  }
+}
+document.addEventListener("visibilitychange", handleVisibilityChange, false);
 async function getBusData() {
+  console.log("Run");
   const BUS_POSITION_URL = "https://data.texas.gov/api/views/cuc7-ywmd/";
   fetch(BUS_POSITION_URL)
     .then((response) => {
@@ -75,7 +92,6 @@ async function drawBuses(viewdata) {
     let marker = L.marker([lat, lon], markerOptions, {
       rotationAngle: direction,
     });
-    // var marker = L.marker([lat, lon]);
     marker.setRotationAngle(direction);
     marker.setRotationOrigin("center center");
     let message = `
