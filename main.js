@@ -26,8 +26,34 @@ let markerOptions = {
 map.zoomControl.setPosition("bottomright");
 let busMarkerLayer = L.layerGroup().addTo(map);
 let sidebar = L.control.sidebar("sidebar").addTo(map);
+const busStopMarker = L.divIcon({
+  html: `
+  <svg
+    width="100"
+    height="100"
+    viewbox="0 0 100 100"
+    version="1.1"
+    preserveAspectRatio="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle cx="25" cy="75" r=dd"20"/>
+  </svg>
+  `,
+  className: "",
+  iconSize: [50, 50],
+});
+
+const circleMarkerOptions = {
+  radius: 5,
+  fillColor: "#3388ff",
+  color: "#000",
+  weight: 0,
+  opacity: 0,
+  fillOpacity: 1,
+};
 
 drawRoutes();
+drawStops();
 getBusData();
 
 document.getElementById("bus-refresh-button").innerHTML += "<p>Success</p>";
@@ -119,6 +145,31 @@ async function drawRoutes() {
     })
     .then((data) => {
       L.geoJSON(data).addTo(map);
+    })
+    .catch((e) => {
+      console.warn(e.message);
+    });
+}
+
+async function drawStops() {
+  fetch("Stops.geojson")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      L.geoJSON(data, {
+        pointToLayer: (feature, latlng) => {
+          return L.circleMarker(latlng, circleMarkerOptions);
+        },
+      }).addTo(map);
+      L.geoJSON(data, {
+        pointToLayer: (feature, latlng) => {
+          return L.circle(latlng, { radius: 402,opacity:0.5,fillOpacity:0 }).addTo(map);
+        },
+      }).addTo(map);
     })
     .catch((e) => {
       console.warn(e.message);
