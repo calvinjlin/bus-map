@@ -8,24 +8,10 @@ L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
-// Icon options
-let iconOptions = {
-  iconUrl: "bus.svg",
-  iconSize: [15, 30],
-};
-// Creating a custom icon
-let customIcon = L.icon(iconOptions);
-
-// Creating Marker Options
-let markerOptions = {
-  // title: "MyLocation",
-  // clickable: true,
-  // draggable: true,
-  icon: customIcon,
-};
 map.zoomControl.setPosition("bottomright");
 let busMarkerLayer = L.layerGroup().addTo(map);
 let sidebar = L.control.sidebar("sidebar").addTo(map);
+
 const busStopMarker = L.divIcon({
   html: `
   <svg
@@ -52,6 +38,19 @@ const circleMarkerOptions = {
   fillOpacity: 1,
 };
 
+// Create bus icon
+let iconOptions = {
+  iconUrl: "bus.svg",
+  iconSize: [15, 30],
+};
+let customIcon = L.icon(iconOptions);
+let markerOptions = {
+  // title: "MyLocation",
+  // clickable: true,
+  // draggable: true,
+  icon: customIcon,
+};
+
 drawRoutes();
 drawStops();
 getBusData();
@@ -59,7 +58,8 @@ getBusData();
 document.getElementById("bus-refresh-button").innerHTML += "<p>Success</p>";
 
 let interval = setInterval(getBusData, 15000);
-// console.log("Initi"+interval)
+document.addEventListener("visibilitychange", handleVisibilityChange, false);
+
 function handleVisibilityChange() {
   if (document.visibilityState === "hidden") {
     console.log("Tab hidden");
@@ -73,7 +73,7 @@ function handleVisibilityChange() {
     console.log(interval);
   }
 }
-document.addEventListener("visibilitychange", handleVisibilityChange, false);
+
 async function getBusData() {
   console.log("Run");
   const BUS_POSITION_URL = "https://data.texas.gov/api/views/cuc7-ywmd/";
