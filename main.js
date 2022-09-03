@@ -12,44 +12,7 @@ map.zoomControl.setPosition("bottomright");
 let busMarkerLayer = L.layerGroup().addTo(map);
 let sidebar = L.control.sidebar("sidebar").addTo(map);
 
-const busStopMarker = L.divIcon({
-  html: `
-  <svg
-    width="100"
-    height="100"
-    viewbox="0 0 100 100"
-    version="1.1"
-    preserveAspectRatio="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <circle cx="25" cy="75" r=dd"20"/>
-  </svg>
-  `,
-  className: "",
-  iconSize: [50, 50],
-});
-
-const circleMarkerOptions = {
-  radius: 5,
-  fillColor: "#3388ff",
-  color: "#000",
-  weight: 0,
-  opacity: 0,
-  fillOpacity: 1,
-};
-
-// Create bus icon
-let iconOptions = {
-  iconUrl: "bus.svg",
-  iconSize: [15, 30],
-};
-let customIcon = L.icon(iconOptions);
-let markerOptions = {
-  // title: "MyLocation",
-  // clickable: true,
-  // draggable: true,
-  icon: customIcon,
-};
+const busIcon = createBusMarker();
 
 drawRoutes();
 drawStops();
@@ -72,6 +35,32 @@ function handleVisibilityChange() {
     interval = setInterval(getBusData, 15000);
     console.log(interval);
   }
+}
+
+function createBusMarker() {
+  let busStopMarker = L.divIcon({
+    html: `
+    <svg
+      width="100"
+      height="100"
+      viewbox="0 0 100 100"
+      version="1.1"
+      preserveAspectRatio="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <circle cx="25" cy="75" r=dd"20"/>
+    </svg>
+    `,
+    className: "",
+    iconSize: [50, 50],
+  });
+
+  let iconOptions = {
+    iconUrl: "bus.svg",
+    iconSize: [15, 30],
+  };
+
+  return L.icon(iconOptions);
 }
 
 async function getBusData() {
@@ -116,6 +105,13 @@ async function drawBuses(viewdata) {
     let lon = position.longitude;
     let speed = position.speed;
     let direction = position.bearing;
+
+    let markerOptions = {
+      // title: "MyLocation",
+      // clickable: true,
+      // draggable: true,
+      icon: busIcon,
+    };
     let marker = L.marker([lat, lon], markerOptions, {
       rotationAngle: direction,
     });
@@ -160,6 +156,14 @@ async function drawStops() {
       return response.json();
     })
     .then((data) => {
+      const circleMarkerOptions = {
+        radius: 5,
+        fillColor: "#3388ff",
+        color: "#000",
+        weight: 0,
+        opacity: 0,
+        fillOpacity: 1,
+      };
       L.geoJSON(data, {
         pointToLayer: (feature, latlng) => {
           return L.circleMarker(latlng, circleMarkerOptions);
@@ -167,7 +171,11 @@ async function drawStops() {
       }).addTo(map);
       L.geoJSON(data, {
         pointToLayer: (feature, latlng) => {
-          return L.circle(latlng, { radius: 402,opacity:0.5,fillOpacity:0 }).addTo(map);
+          return L.circle(latlng, {
+            radius: 402,
+            opacity: 0.5,
+            fillOpacity: 0,
+          }).addTo(map);
         },
       }).addTo(map);
     })
