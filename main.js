@@ -20,8 +20,13 @@ class Stops {
       console.warn(e.message);
     });
 
-    this.stopsLayer = L.layerGroup().addTo(map);
-    this.walkshedLayer = L.layerGroup().addTo(map);
+    this.walkshedLayer = L.layerGroup().setZIndex(4);
+    this.stopsLayer = L.layerGroup({pane:'stopsPane'}).setZIndex(5).addTo(map);
+    layerControl.addOverlay(this.stopsLayer, "Stops")
+    layerControl.addOverlay(this.walkshedLayer, "Walkshed")
+    map.on("overlayadd", function (event) {
+      this.stopsLayer.bringToFront();
+    });
 
     this.circleMarkerOptions = {
       radius: 5,
@@ -39,8 +44,13 @@ class Stops {
       pointToLayer: (feature, latlng) => {
         let marker = L.circleMarker(latlng, this.circleMarkerOptions)
         let props = feature.properties
+        marker.bindTooltip(`
+          <b>${props.STOP_NAME}</b><br>
+          Stop #: ${props.STOP_ID}<br>
+        `)
         marker.bindPopup(`
-          <b>${props.STOP_NAME} (Stop ${props.STOP_ID})</b><br>  
+          <b>${props.STOP_NAME}</b><br>
+          Stop #: ${props.STOP_ID}<br>  
           Stop Type: ${props.STOP_TYPE}<br>
           Zip Code: ${props.ZIP}<br><br>
           Benches: ${props.BENCHES}<br>
@@ -103,18 +113,22 @@ class Stops {
 
 // initialize the map
 let map = L.map("map").setView([30.28, -97.74], 11);
-
+map.createPane('stopsPane')
 // load a tile layer
-L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+let streets = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 18,
   attribution:
     '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-}).addTo(map);
+})//.addTo(map);
 
 map.zoomControl.setPosition("bottomright");
-let busMarkerLayer = L.layerGroup().addTo(map);
+let busMarkerLayer = L.layerGroup();
 let sidebar = L.control.sidebar("sidebar").addTo(map);
-
+let layerControl = L.control.layers({
+  'OSM': streets.addTo(map)
+}, {
+  'Buses': busMarkerLayer.addTo(map)
+}).addTo(map);
 const busIcon = createBusMarker();
 
 drawRoutes();
@@ -210,6 +224,14 @@ async function drawBuses(viewdata) {
     let lon = position.longitude;
     let speed = position.speed;
     let direction = position.bearing;
+    let stopSequence = element.vehicle.currentStopSequence;
+    let currentStatus = element.vehicle.currentStatus;
+    let stopId = element.vehicle.stopId;
+    let routeId = 'undefined'
+    try {
+      routeId = element.vehicle.trip.routeId;
+    } catch {}
+    
 
     let markerOptions = {
       // title: "MyLocation",
@@ -222,10 +244,18 @@ async function drawBuses(viewdata) {
     });
     marker.setRotationAngle(direction);
     marker.setRotationOrigin("center center");
+    marker.bindTooltip(`
+      <b>Vehicle #${bus_number} </b><br> 
+      Route ${routeId}
+    `)
     let message = `
-        <b>Bus #${bus_number} </b> <br>
-        Speed ${speed} <br>
-        Direction ${direction} <br>
+        <b>Vehicle #${bus_number} </b><br>
+        Route: ${routeId}<br>
+        Stop Id: ${stopId}<br>
+        Stop Sequence: ${stopSequence}<br>  
+        Status: ${currentStatus} <br>
+        Speed: ${speed} <br>
+        Direction: ${direction} <br>
       `;
     marker.bindPopup(message).openPopup();
     marker.addTo(busMarkerLayer);
@@ -245,7 +275,18 @@ async function drawRoutes() {
       return response.json();
     })
     .then((data) => {
-      L.geoJSON(data).addTo(map);
+      L.geoJSON(data, {
+        onEachFeature: (feature,layer) => {
+          let props = feature.properties
+          layer.bindPopup(`
+            <b>Route ${props.ROUTE_ID}</b><br>
+            Route Name: ${props.ROUTENAME}<br>
+            Route Type: ${props.ROUTETYPE}<br>
+            Service Name: ${props.SERVICENM}<br>
+            Service Type: ${props.SERVICETYP}<br>
+          `)
+        }
+      }).addTo(map);
     })
     .catch((e) => {
       console.warn(e.message);
