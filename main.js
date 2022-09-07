@@ -37,7 +37,18 @@ class Stops {
   draw() {
     L.geoJSON(this.data, {
       pointToLayer: (feature, latlng) => {
-        return L.circleMarker(latlng, this.circleMarkerOptions);
+        let marker = L.circleMarker(latlng, this.circleMarkerOptions)
+        let props = feature.properties
+        marker.bindPopup(`
+          <b>${props.STOP_NAME} (Stop ${props.STOP_ID})</b><br>  
+          Stop Type: ${props.STOP_TYPE}<br>
+          Zip Code: ${props.ZIP}<br><br>
+          Benches: ${props.BENCHES}<br>
+          Shelters: ${props.SHELTERS}<br>
+          Bike Racks: ${props.BIKERACKS}<br>
+          Trash Cans: ${props.TRASHCANS}<br>
+        `)
+        return marker;
       },
     }).addTo(this.stopsLayer);
   }
