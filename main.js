@@ -1,3 +1,95 @@
+class Stops {
+  constructor(){
+    fetch("Stops.geojson")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
+      this.data = data
+      if (this.stopsEnabled()) {
+        this.draw()
+      }
+      if (this.walkshedEnabled()) {
+        this.drawWalkshed()
+      }
+    })
+    .catch((e) => {
+      console.warn(e.message);
+    });
+
+    this.stopsLayer = L.layerGroup().addTo(map);
+    this.walkshedLayer = L.layerGroup().addTo(map);
+
+    this.circleMarkerOptions = {
+      radius: 5,
+      fillColor: "#3388ff",
+      color: "#000",
+      weight: 0,
+      opacity: 0,
+      fillOpacity: 1,
+    }
+
+    
+  }
+  draw() {
+    L.geoJSON(this.data, {
+      pointToLayer: (feature, latlng) => {
+        return L.circleMarker(latlng, this.circleMarkerOptions);
+      },
+    }).addTo(this.stopsLayer);
+  }
+  drawAll() {
+    this.draw()
+    this.drawWalkshed()
+  }
+  clear() {
+    this.stopsLayer.clearLayers();
+  }
+  clearAll() {
+    this.clear()
+    this.clearWalkshed()
+  }
+  drawWalkshed() {
+    L.geoJSON(this.data, {
+      pointToLayer: (feature, latlng) => {
+        return L.circle(latlng, {
+          radius: 402,
+          opacity: 0.5,
+          fillOpacity: 0,
+        });
+      },
+    }).addTo(this.walkshedLayer);
+  }
+  clearWalkshed() {
+    this.walkshedLayer.clearLayers();
+  }
+  stopsEnabled() {
+    var checkBox = document.getElementById("stopsVisible");
+    return checkBox.checked;
+  }
+  walkshedEnabled() {
+    var checkBox = document.getElementById("walkshedVisible");
+    return checkBox.checked
+  }
+  toggleVisible() {
+    if (this.stopsEnabled()) {
+      this.draw();
+    } else {
+      this.clear();
+    }
+  }
+  toggleWalkshedVisible() {
+    if (this.walkshedEnabled()) {
+      this.drawWalkshed();
+    } else {
+      this.clearWalkshed();
+    }
+  }
+}
+
 // initialize the map
 let map = L.map("map").setView([30.28, -97.74], 11);
 
@@ -15,13 +107,15 @@ let sidebar = L.control.sidebar("sidebar").addTo(map);
 const busIcon = createBusMarker();
 
 drawRoutes();
-drawStops();
+const stops = new Stops();
 getBusData();
 
 document.getElementById("bus-refresh-button").innerHTML += "<p>Success</p>";
 
 let interval = setInterval(getBusData, 15000);
 document.addEventListener("visibilitychange", handleVisibilityChange, false);
+
+
 
 function handleVisibilityChange() {
   if (document.visibilityState === "hidden") {
@@ -147,39 +241,4 @@ async function drawRoutes() {
     });
 }
 
-async function drawStops() {
-  fetch("Stops.geojson")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      const circleMarkerOptions = {
-        radius: 5,
-        fillColor: "#3388ff",
-        color: "#000",
-        weight: 0,
-        opacity: 0,
-        fillOpacity: 1,
-      };
-      L.geoJSON(data, {
-        pointToLayer: (feature, latlng) => {
-          return L.circleMarker(latlng, circleMarkerOptions);
-        },
-      }).addTo(map);
-      L.geoJSON(data, {
-        pointToLayer: (feature, latlng) => {
-          return L.circle(latlng, {
-            radius: 402,
-            opacity: 0.5,
-            fillOpacity: 0,
-          }).addTo(map);
-        },
-      }).addTo(map);
-    })
-    .catch((e) => {
-      console.warn(e.message);
-    });
-}
+
