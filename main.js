@@ -22,11 +22,8 @@ class Stops {
 
     this.walkshedLayer = L.layerGroup().setZIndex(4);
     this.stopsLayer = L.layerGroup({pane:'stopsPane'}).setZIndex(5).addTo(map);
-    layerControl.addOverlay(this.stopsLayer, "Stops")
-    layerControl.addOverlay(this.walkshedLayer, "Walkshed")
-    map.on("overlayadd", function (event) {
-      this.stopsLayer.bringToFront();
-    });
+    layerControl.addOverlay(this.stopsLayer, "Stops");
+    layerControl.addOverlay(this.walkshedLayer, "Walkshed");
 
     this.circleMarkerOptions = {
       radius: 5,
