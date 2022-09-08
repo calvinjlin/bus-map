@@ -116,13 +116,37 @@ let streets = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 18,
   attribution:
     '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-})//.addTo(map);
+})
+
+let carto_default = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}' + (L.Browser.retina ? '@2x.png' : '.png'), {
+   attribution:'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>',
+   subdomains: 'abcd',
+   maxZoom: 20,
+   minZoom: 0
+ });
+
+let carto = L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}' + (L.Browser.retina ? '@2x.png' : '.png'), {
+   attribution:'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>',
+   subdomains: 'abcd',
+   maxZoom: 20,
+   minZoom: 0
+ });
+
+ let carto_dark = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}' + (L.Browser.retina ? '@2x.png' : '.png'), {
+   attribution:'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>',
+   subdomains: 'abcd',
+   maxZoom: 20,
+   minZoom: 0
+ });
 
 map.zoomControl.setPosition("bottomright");
 let busMarkerLayer = L.layerGroup();
 let sidebar = L.control.sidebar("sidebar").addTo(map);
 let layerControl = L.control.layers({
-  'OSM': streets.addTo(map)
+  'OSM': streets.addTo(map),
+  'Carto': carto_default,
+  'Carto Positron': carto.addTo(map),
+  // 'Carto Dark Matter': carto_dark
 }, {
   'Buses': busMarkerLayer.addTo(map)
 }).addTo(map);
