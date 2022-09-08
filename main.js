@@ -25,8 +25,6 @@ class Stops {
     });
 
     
-    
-
     this.circleMarkerOptions = {
       radius: 5,
       fillColor: "#3388ff",
@@ -287,6 +285,10 @@ async function drawRoutes() {
             Service Name: ${props.SERVICENM}<br>
             Service Type: ${props.SERVICETYP}<br>
           `)
+          // layer.setStyle({
+          //   color: '#'+props.ROUTECOLOR,
+          // });
+
           layer.bindTooltip(`
             <b>Route ${props.ROUTE_ID}</b>
           `,{sticky: true})
