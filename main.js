@@ -9,21 +9,23 @@ class Stops {
     })
     .then((data) => {
       this.data = data
-      if (this.stopsEnabled()) {
-        this.draw()
-      }
-      if (this.walkshedEnabled()) {
-        this.drawWalkshed()
-      }
+      this.walkshedLayer = L.layerGroup()
+      this.stopsLayer = L.featureGroup().addTo(map);
+      map.on("overlayadd", (event) => {
+        // Use arrow function so that this still refers to the Stops object
+        this.stopsLayer.bringToFront();
+      });
+      this.draw()
+      this.drawWalkshed()
+      layerControl.addOverlay(this.stopsLayer, "Stops");
+      layerControl.addOverlay(this.walkshedLayer, "Walkshed");
     })
     .catch((e) => {
       console.warn(e.message);
     });
 
-    this.walkshedLayer = L.layerGroup().setZIndex(4);
-    this.stopsLayer = L.layerGroup({pane:'stopsPane'}).setZIndex(5).addTo(map);
-    layerControl.addOverlay(this.stopsLayer, "Stops");
-    layerControl.addOverlay(this.walkshedLayer, "Walkshed");
+    
+    
 
     this.circleMarkerOptions = {
       radius: 5,
@@ -84,33 +86,11 @@ class Stops {
   clearWalkshed() {
     this.walkshedLayer.clearLayers();
   }
-  stopsEnabled() {
-    var checkBox = document.getElementById("stopsVisible");
-    return checkBox.checked;
-  }
-  walkshedEnabled() {
-    var checkBox = document.getElementById("walkshedVisible");
-    return checkBox.checked
-  }
-  toggleVisible() {
-    if (this.stopsEnabled()) {
-      this.draw();
-    } else {
-      this.clear();
-    }
-  }
-  toggleWalkshedVisible() {
-    if (this.walkshedEnabled()) {
-      this.drawWalkshed();
-    } else {
-      this.clearWalkshed();
-    }
-  }
 }
 
 // initialize the map
 let map = L.map("map").setView([30.28, -97.74], 11);
-map.createPane('stopsPane')
+
 // load a tile layer
 let streets = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   maxZoom: 18,
@@ -145,7 +125,7 @@ let sidebar = L.control.sidebar("sidebar").addTo(map);
 let layerControl = L.control.layers({
   'OSM': streets.addTo(map),
   'Carto': carto_default,
-  'Carto Positron': carto.addTo(map),
+  'Carto Positron': carto,
   // 'Carto Dark Matter': carto_dark
 }, {
   'Buses': busMarkerLayer.addTo(map)
@@ -153,6 +133,7 @@ let layerControl = L.control.layers({
 const busIcon = createBusMarker();
 
 drawRoutes();
+
 const stops = new Stops();
 getBusData();
 
