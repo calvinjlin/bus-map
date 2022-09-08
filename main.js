@@ -89,7 +89,7 @@ class Stops {
 }
 
 // initialize the map
-let map = L.map("map").setView([30.28, -97.74], 11);
+let map = L.map("map").setView([30.35, -97.74], 11);
 
 // load a tile layer
 let streets = L.tileLayer("http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
