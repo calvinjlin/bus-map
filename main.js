@@ -287,10 +287,12 @@ async function drawRoutes() {
             Service Name: ${props.SERVICENM}<br>
             Service Type: ${props.SERVICETYP}<br>
           `)
-          layer.on({
-            click: ()=>{
-              layer.bringToBack();
-            }
+          layer.bindTooltip(`
+            <b>Route ${props.ROUTE_ID}</b>
+          `,{sticky: true})
+          layer.on('contextmenu',()=>{
+            layer.closeTooltip();  // Prevents tooltip from staying when right-clicking
+            layer.bringToBack();
           })
         }
       }).addTo(map);
