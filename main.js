@@ -287,6 +287,11 @@ async function drawRoutes() {
             Service Name: ${props.SERVICENM}<br>
             Service Type: ${props.SERVICETYP}<br>
           `)
+          layer.on({
+            click: ()=>{
+              layer.bringToBack();
+            }
+          })
         }
       }).addTo(map);
     })
