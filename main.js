@@ -119,15 +119,21 @@ let carto = L.tileLayer('https://basemaps.cartocdn.com/light_all/{z}/{x}/{y}' + 
 
 map.zoomControl.setPosition("bottomright");
 let busMarkerLayer = L.layerGroup();
+let buildingsLayer = L.layerGroup();
 let sidebar = L.control.sidebar("sidebar").addTo(map);
 let layerControl = L.control.layers({
   'OSM': streets.addTo(map),
   'Carto': carto_default,
   'Carto Positron': carto,
-  // 'Carto Dark Matter': carto_dark
+  'Carto Dark Matter': carto_dark
 }, {
-  'Buses': busMarkerLayer.addTo(map)
+  'Buses': busMarkerLayer.addTo(map),
+  'Buildings': buildingsLayer
 }).addTo(map);
+
+
+var osmb = new OSMBuildings(buildingsLayer).load('https://{s}.data.osmbuildings.org/0.2/anonymous/tile/{z}/{x}/{y}.json');
+
 const busIcon = createBusMarker();
 
 drawRoutes();
